@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Soğuk Zincir İzleme Paneli</title>
+<link rel="stylesheet" href="/static/style.css">
+<script src="/static/vendor/chart.umd.js"></script>
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <div class="logo">❄</div>
+    <div><div class="title">Soğuk Zincir İzleme Paneli</div><div class="subtitle">Tekstil tabanlı yoğurt taşıma çantası · prototip</div></div>
+  </div>
+  <nav class="tabs">
+    <button data-tab="canli" class="tab active">Canlı izleme</button>
+    <button data-tab="karsilastirma" class="tab">Tasarım karşılaştırma</button>
+    <button data-tab="sensor" class="tab">Sensör sağlığı</button>
+  </nav>
+</header>
+
+<div class="layout">
+  <aside class="side">
+    <h3>Teslimat</h3>
+    <label>Çanta tasarımı<select id="tasarim"></select></label>
+    <label>PCM miktarı<select id="pcm"></select></label>
+    <label>Ortam sıcaklığı<select id="ortam"></select></label>
+    <label>Sensör durumu<select id="bozulma"></select></label>
+    <label>Tahmin modeli<select id="model"></select></label>
+    <div class="layers" id="layers"></div>
+    <div class="upload">
+      <h3>Hazır kayıt</h3>
+      <label class="filebtn">CSV yükle<input type="file" id="dosya" accept=".csv,text/csv"></label>
+      <div class="ubtns"><button id="ornekBtn" class="btn2">Örnek kayıt</button><button id="simBtn" class="btn2">Simülasyona dön</button></div>
+      <div class="ustat" id="ustat">Kaynak: simülasyon</div>
+    </div>
+    <div class="play">
+      <button id="oynat" class="btn">▶ Oynat</button>
+      <input type="range" id="zaman" min="30" max="480" value="30">
+      <div class="clock" id="saat">t = 0:30</div>
+    </div>
+    <p class="hint" id="hint">Veriler termal model ve sensör simülatöründen gelir; “ürün referansı” yalnızca doğrulama içindir, sahada ölçülmez.</p>
+  </aside>
+
+  <main>
+    <!-- CANLI -->
+    <section id="tab-canli" class="pane active">
+      <div id="banner" class="banner ok">Durum normal</div>
+      <div class="kpis">
+        <div class="kpi"><div class="k">İç hava (sensör)</div><div class="v" id="k-hava">–</div><div class="s" id="k-hava-s"></div></div>
+        <div class="kpi"><div class="k">Ortam</div><div class="v" id="k-ortam">–</div><div class="s">dış sensör</div></div>
+        <div class="kpi accent"><div class="k">Ürün tahmini (30 dk sonra)</div><div class="v" id="k-tahmin">–</div><div class="s" id="k-tahmin-s"></div></div>
+        <div class="kpi"><div class="k">Doldurulan kayıt</div><div class="v" id="k-dolu">–</div><div class="s">paket kaybı, “tahmini” bayraklı</div></div>
+      </div>
+      <div class="card chartcard"><div class="cardhead"><span>Sıcaklık akışı</span><span class="muted" id="ch-sub"></span></div><div class="cw"><canvas id="chLive"></canvas></div></div>
+      <div class="grid2">
+        <div class="card"><div class="cardhead"><span>Olay kaydı</span></div><ul class="log" id="log"></ul></div>
+        <div class="card"><div class="cardhead"><span>Son kayıtlar</span></div>
+          <table class="tbl"><thead><tr><th>Zaman</th><th>İç hava</th><th>Ortam</th><th>Tahmin (+30 dk)</th><th>Kaynak</th></tr></thead><tbody id="kayit"></tbody></table>
+        </div>
+      </div>
+    </section>
+
+    <!-- KARŞILAŞTIRMA -->
+    <section id="tab-karsilastirma" class="pane">
+      <div class="grid2 wide">
+        <div class="card"><div class="cardhead"><span>Ürün 6 °C’yi aşana kadar geçen süre (saat)</span></div><table class="hm" id="hm"></table>
+          <p class="muted small">27 senaryo · 8 saatlik taşıma · seçili satır kenarlıkla gösterilir</p></div>
+        <div class="card"><div class="cardhead"><span>Üç tasarım, aynı PCM ve ortam</span><span class="muted" id="cmp-sub"></span></div><div class="cw"><canvas id="chCmp"></canvas></div></div>
+      </div>
+    </section>
+
+    <!-- SENSÖR -->
+    <section id="tab-sensor" class="pane">
+      <div class="grid2 wide">
+        <div class="card"><div class="cardhead"><span>Sensör durumuna göre tahmin hatası</span><span class="muted" id="sen-sub"></span></div>
+          <table class="tbl" id="senTbl"><thead><tr><th>Sensör durumu</th><th>MAE</th><th>Doldurulan</th><th>İlk uyarı</th><th>Erken uyarı</th></tr></thead><tbody></tbody></table></div>
+        <div class="card"><div class="cardhead"><span>Ham ölçüm ve doldurulan kayıtlar</span><span class="muted" id="raw-sub"></span></div><div class="cw"><canvas id="chRaw"></canvas></div></div>
+      </div>
+      <div class="card"><div class="cardhead"><span>Model karşılaştırması · 30 dk ileri tahmin, MAE (°C)</span><span class="muted">eğitimde kullanılmayan 27 taşıma koşusu</span></div>
+        <table class="tbl" id="mdlTbl"></table></div>
+    </section>
+  </main>
+</div>
+<script src="/static/app.js"></script>
+</body>
+</html>

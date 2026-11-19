@@ -1,0 +1,12 @@
+# Render.com üzerinde ücretsiz web servisi olarak yayına alma (isteğe bağlı).
+# Render panelinde "New > Blueprint" ile bu depoyu seçmek yeterlidir.
+services:
+  - type: web
+    name: soguk-zincir-panel
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt && python calistir_hepsi.py
+    startCommand: uvicorn panel.app:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
